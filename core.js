@@ -22,16 +22,19 @@ function $(sel) {
 	r.html=function(html) {this.forEach( function(ele){ ele.innerHTML=html; });return this;};
 	r.addClass=function(cls) {this.forEach( function(ele){ ele.classList.add(cls); });return this;};
 	r.removeClass=function(cls) {this.forEach( function(ele){ ele.classList.remove(cls); });return this;};
+	r.extend=function(o){var rr={}, k; for(k in o){ if(o.hasOwnProperty(k)){rr[k]=o[k];} } return rr;};
 	return r;}
 
 // Pages system
 (function(){
-	var self={}, pages=[];
-	self.reg=function(fn){pages.indexOf(fn)===-1?pages.push(fn):0;},
-		self.inits=function(){pages.forEach(function(p){p.init instanceof Function?p.init():0;});},
-		self.hideAll=function(){$('.page').removeClass('open');},
-		self.open=function(id){self.hideAll(); if(typeof id==='string'&&id!==''){$(id).addClass('open');}}
-	self.create=function(id){var p={};p.ID=id;self.reg(p); return p;}
+	var self={}, pages=[], nav=null;
+	function makeNavigation(sel){nav=$(sel)[0];$('.page').forEach(makeLink);}
+	function makeLink(e){nav.innerHTML+='<a href="#'+ e.id+'" class="btn">'+ e.id+'</a>';}
+	self.reg=function(fn){pages.indexOf(fn)===-1?pages.push(fn):0;};
+	self.inits=function(sel){makeNavigation(sel);pages.forEach(function(p){p.init instanceof Function?p.init():0;});};
+	self.hideAll=function(){$('.page').removeClass('open');};
+	self.open=function(id){self.hideAll(); if(typeof id==='string'&&id!==''){$(id).addClass('open');}};
+	self.make=function(id){var p={};p.ID=id;self.reg(p); return p;};
 	window.Pages=self;
 })();
 
@@ -70,5 +73,5 @@ win.onload=function(){
 	win.onhashchange();
 	win.onfocus();
 	Accordion.init();
-	Pages.inits();
+	Pages.inits('#Nav');
 };
