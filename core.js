@@ -22,8 +22,8 @@ function $(sel) {
 	r.html=function(html) {this.forEach( function(ele){ ele.innerHTML=html; });return this;};
 	r.addClass=function(cls) {this.forEach( function(ele){ ele.classList.add(cls); });return this;};
 	r.removeClass=function(cls) {this.forEach( function(ele){ ele.classList.remove(cls); });return this;};
-	r.extend=function(o){var rr={}, k; for(k in o){ if(o.hasOwnProperty(k)){rr[k]=o[k];} } return rr;};
 	return r;}
+$.extend=function(a,b){for(var k in b){ if(b.hasOwnProperty(k)){a[k]=b[k];} } return a;};
 
 // Pages system
 (function(){
