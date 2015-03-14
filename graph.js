@@ -60,8 +60,6 @@ GraphicEngine.prototype.constructor = GraphicEngine;
 
 //--------------------------------------------------------------------------------------------------
 GraphicEngine.prototype.init=function(opt) {
-		//this.graphics._self = this;
-		//this.controls._self = this;
 		opt = opt || {};
 		this._can = typeof opt.canvas === 'string' ? document.querySelector(opt.canvas) : opt.canvas;
 		this._can = this._can instanceof HTMLCanvasElement ? this._can : document.createElement('canvas');
