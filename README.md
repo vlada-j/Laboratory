@@ -6,11 +6,11 @@ Simply environment for testing and experimentation
 
 Just add in body (affter #Nav):
 
-<section id="NameOfYourPage" class="page">
+    <section id="NameOfYourPage" class="page">
+    
+      <!-- Your code gose here -->
+    
+    </section>
 
-  <!-- Your code gose here -->
-
-</section>
-
-<script src="your_js_file.js"></script>
+    <script src="your_js_file.js"></script>
 
