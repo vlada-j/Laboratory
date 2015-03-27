@@ -22,21 +22,53 @@ function $(sel) {
 	r.html=function(html) {this.forEach( function(ele){ ele.innerHTML=html; });return this;};
 	r.addClass=function(cls) {this.forEach( function(ele){ ele.classList.add(cls); });return this;};
 	r.removeClass=function(cls) {this.forEach( function(ele){ ele.classList.remove(cls); });return this;};
+	r.hasClass=function(c) {var cl=this[0].classList,l=cl.length;for(var i=0;i<l;i++){if(cl[i]===c){return true;}}return false;};
 	return r;}
 $.extend=function(a,b){for(var k in b){ if(b.hasOwnProperty(k)){a[k]=b[k];} } return a;};
 
 // Pages system
 (function(){
-	var self={}, pages=[], nav=null;
-	function makeNavigation(sel){nav=$(sel)[0];$('.page').forEach(makeLink);}
-	function makeLink(e){nav.innerHTML+='<a href="#'+ e.id+'" class="btn">'+ e.id+'</a>';}
-	self.reg=function(fn){pages.indexOf(fn)===-1?pages.push(fn):0;};
-	self.inits=function(sel){makeNavigation(sel);pages.forEach(function(p){p.init instanceof Function?p.init():0;});};
-	self.hideAll=function(){$('.page').removeClass('open');};
-	self.open=function(id){self.hideAll(); if(typeof id==='string'&&id!==''){$(id).addClass('open');}};
-	self.make=function(id){var p={};p.ID=id;self.reg(p); return p;};
+	var pages=[], nav=null;
+	function self(id) {
+		if(typeof id==='string'&&id!=='') {
+			id=id.charAt(0)==='#'?id.slice(1):id;
+			for(var i=0;i<pages.length;i++){if(pages[i].id===id) { return pages[i]; }}
+			var p=doc.querySelector('#'+id+'.page');
+			if(p){return makePage(p);}}
+		return {open:function(){}, close:function(){}};}
+
+	function makePage(e) {
+		var p={id:e.id,page:$(e),
+			open:function(){if(!this.page.hasClass('open')){this.page.addClass('open');this.onOpen.call(this);}},
+			close:function(){if(this.page.hasClass('open')){this.page.removeClass('open');this.onClose.call(this);}},
+			onLoad:function(){},
+			onOpen:function(){},
+			onClose:function(){}};
+		pages.push(p);
+		return p;}
+	function makeLink(p){nav.innerHTML+='<a href="#'+p.id+'" class="btn">'+(p.title||p.id)+'</a>';}
+	self.init=function(){
+		nav=$('#Nav')[0];
+		$('.page').forEach(function(e){self(e.id);makeLink(e);});
+		pages.forEach(function(p){p.onLoad.call(p);});};
+	self.open=function(id){pages.forEach(function(p){p.close();});self(id).open();};
 	window.Pages=self;
 })();
+
+// Boost
+win.onload=function(){
+	var b=$('body');
+	win.onfocus=function(){setTimeout(function(){b.addClass('inf');},500);};
+	win.onblur=function(){b.removeClass('inf');};
+	win.onhashchange=function(){Pages.open(location.hash);window.scrollTo(0,0)}
+	win.onhashchange();
+	win.onfocus();
+	Accordion.init();
+	Pages.init();
+};
+
+// Components
+
 
 // Accordion
 function Accordion(sel){
@@ -62,16 +94,4 @@ function Accordion(sel){
 Accordion.instances=[];
 Accordion.init=function(sel){
 	$(sel||'.accordion').forEach(function(ele){ Accordion.instances.push(new Accordion(ele)); });
-};
-
-// Boost
-win.onload=function(){
-	var b=$('body');
-	win.onfocus=function(){setTimeout(function(){b.addClass('inf');},500);};
-	win.onblur=function(){b.removeClass('inf');};
-	win.onhashchange=function(){Pages.open(location.hash);window.scrollTo(0,0)}
-	win.onhashchange();
-	win.onfocus();
-	Accordion.init();
-	Pages.inits('#Nav');
 };
