@@ -12,12 +12,6 @@ Just add in body (affter #Nav):
     
     </section>
 
-    <script>
-        Pages.make( 'NameOfYourPage' ).init = function() {
-            // If you want to do somting when page is created,
-            // put that code here
-        };
-        
-        // Your code gose here
-    </script>
+If you want a different name then id, add a title attribute:
 
+    <section id="NameOfYourPage" title="Name of your page" class="page">
