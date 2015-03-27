@@ -29,19 +29,19 @@ $.extend=function(a,b){for(var k in b){ if(b.hasOwnProperty(k)){a[k]=b[k];} } re
 // Pages system
 (function(){
 	var pages=[], nav=null;
-	function self(id) {
+	function self(id, fn) {
 		if(typeof id==='string'&&id!=='') {
 			id=id.charAt(0)==='#'?id.slice(1):id;
 			for(var i=0;i<pages.length;i++){if(pages[i].id===id) { return pages[i]; }}
 			var p=doc.querySelector('#'+id+'.page');
-			if(p){return makePage(p);}}
+			if(p){return makePage(p, fn);}}
 		return {open:function(){}, close:function(){}};}
 
-	function makePage(e) {
+	function makePage(e,fn) {
 		var p={id:e.id,page:$(e),
 			open:function(){if(!this.page.hasClass('open')){this.page.addClass('open');this.onOpen.call(this);}},
 			close:function(){if(this.page.hasClass('open')){this.page.removeClass('open');this.onClose.call(this);}},
-			onLoad:function(){},
+			onLoad:fn||function(){},
 			onOpen:function(){},
 			onClose:function(){}};
 		pages.push(p);
