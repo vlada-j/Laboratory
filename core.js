@@ -14,7 +14,7 @@ function $(sel) {
 		} else {return n.children;}
 	}
 	if(sel instanceof Node) {sel=[sel];}
-	r=ar(sel);
+	var r=ar(sel);
 	r.children=function(s) {var rr=[]; this.forEach(function(ele){rr=rr.concat( ar( findChildren(ele, s) ) );});return rr;}
 	r.click=function(fn) {this.forEach( function(ele){ ele.addEventListener('click', fn); });return this;};
 	r.show=function() {this.forEach( function(ele){ ele.style.display='block'; });return this;};
