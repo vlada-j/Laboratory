@@ -47,6 +47,7 @@ function GraphicEngine(opt) {
 	this._zoom		=1;
 	this._objects	=[];
 	this._isRun		=false;
+	this._noDraw	=false;
 	this._fade		=true;
 	this._fadeFact	=.1;
 	this._onUpdate	=function(){};
@@ -166,7 +167,7 @@ GraphicEngine.prototype.animate = function() {
 	var self = this;
 	window.requestAnimFrame(function(){self.animate();});
 	if(!this._isRun) { return; }
-	this.draw();
+	if(!this._noDraw) { this.draw(); }
 	this._onUpdate();
 };
 
