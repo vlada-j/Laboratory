@@ -54,6 +54,23 @@ $.extend=function(a,b){for(var k in b){ if(b.hasOwnProperty(k)){a[k]=b[k];} } re
 	window.Pages=self;
 })();
 
+// LazyLoading
+function LazyLoading(fs, ele, a) {
+	var list=(fs||'').split(' ');
+	ele=ele||body[0];
+	list.forEach(load);
+
+	function load(src) {
+		if(typeof src!=='string' || src==='') {return false;}
+		var s=doc.createElement('script');
+		s.type='text/javascript';
+		s.async=!!a;
+		src+=src.match(/(.js)$/g)?'':'.js';
+		s.src=src;
+		ele.appendChild(s);
+	}
+}
+
 // Boost
 win.onload=function(){
 	var b=$('body');
