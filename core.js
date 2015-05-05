@@ -25,6 +25,8 @@ function $(sel) {
 	r.hasClass=function(c) {var cl=this[0].classList,l=cl.length;for(var i=0;i<l;i++){if(cl[i]===c){return true;}}return false;};
 	return r;}
 $.extend=function(a,b){for(var k in b){ if(b.hasOwnProperty(k)){a[k]=b[k];} } return a;};
+$.onReady=function(fn){doc.addEventListener('readystatechange',function(){if(doc.readyState==='complete'){fn.apply(this,arguments)}});};
+$.onLoad=function(fn){win.addEventListener('load',fn);};
 
 // Pages system
 (function(){
