@@ -30,7 +30,7 @@ $.onLoad=function(fn){win.addEventListener('load',fn);};
 
 // Pages system
 (function(){
-	var pages=[], nav=null;
+	var pages=[], nav=null, isInit=false;
 	function self(id, fl, fo, fc) {
 		if(typeof id==='string'&&id!=='') {
 			id=id.charAt(0)==='#'?id.slice(1):id;
@@ -46,12 +46,14 @@ $.onLoad=function(fn){win.addEventListener('load',fn);};
 			onOpen:fo||function(){},
 			onClose:fc||function(){}};
 		pages.push(p);
+		!e.dataset.load||LazyLoading(e.dataset.load,e);
 		return p;}
 	function makeLink(p){nav.innerHTML+='<a href="#'+p.id+'" class="btn">'+(p.title||p.id)+'</a>';}
 	self.init=function(){
 		nav=$('#Nav')[0];
 		$('.page').forEach(function(e){self(e.id);makeLink(e);});
-		pages.forEach(function(p){p.onLoad.call(p);});};
+		pages.forEach(function(p){p.onLoad.call(p);});
+		isInit=true;};
 	self.open=function(id){pages.forEach(function(p){p.close();});self(id).open();};
 	window.Pages=self;
 })();
@@ -60,16 +62,52 @@ $.onLoad=function(fn){win.addEventListener('load',fn);};
 function LazyLoading(fs, ele, a) {
 	var list=(fs||'').split(' ');
 	ele=ele||body[0];
-	list.forEach(load);
-
-	function load(src) {
+	list.forEach(function(src){
 		if(typeof src!=='string' || src==='') {return false;}
+		switch (src.match(/(\w+)$/g)[0]){
+			case 'js':
+				loadJS(src);
+				break;
+			case 'tpl':
+			case 'htl':
+			case 'html':
+				loadTPL(src);
+				break;
+			case 'css':
+				loadCSS(src);
+				break;
+		}
+	});
+
+	function loadJS(src, fn) {
 		var s=doc.createElement('script');
 		s.type='text/javascript';
 		s.async=!!a;
-		src+=src.match(/(.js)$/g)?'':'.js';
 		s.src=src;
+		s.onload=fn;
 		ele.appendChild(s);
+		return s;
+	}
+
+	function loadTPL(src){
+		var s=loadJS(src, onLoad),
+			tpl='';
+		function onLoad(){
+			if(typeof importTemplate==='function') {
+				tpl=importTemplate.toString();
+				tpl=tpl.slice(tpl.indexOf('/*')+2, tpl.indexOf('*/'));
+			}
+			s.remove();
+			s=null;
+			ele.innerHTML+=tpl;
+		}
+	}
+
+	function loadCSS(src){
+		var l=doc.createElement('link');
+		l.rel='stylesheet';
+		l.href=src;
+		ele.appendChild(l);
 	}
 }
 
