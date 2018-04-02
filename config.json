@@ -1,0 +1,48 @@
+{
+  "app": {
+    "debug": true,
+    "name": "..::: LAB :::..",
+    "modules": {
+      "loader": {
+        "libs": "/js/",
+        "pages": "/pages/",
+        "components": "/components/",
+        "services": "/services/"
+      },
+      "router": [],
+      "view": {
+        "focus": false,
+        "element": "#App",
+        "dependencies": [
+          "js/vue.min.js",
+          "components/vue-collapse.js"
+        ],
+        "components": [
+          "components/loader.vue",
+          "pages/index.vue"
+        ],
+        "styles": [
+          "assets/main.css",
+          "assets/new-them.css"
+        ]
+      }
+    }
+  },
+  "converter": {
+    "link": "converter",
+    "component": "converter/converter.vue",
+    "scripts": ["converter/converter.js"]
+  },
+  "testing": {
+    "link": "testing",
+    "component": "testing/testing.vue"
+  },
+  "js": {
+    "link": "js",
+    "component": "pages/js.vue"
+  },
+  "image-convert": {
+    "link": "image-convert",
+    "component": "pages/image-convert.vue"
+  }
+}
