@@ -2,47 +2,57 @@
   "app": {
     "debug": true,
     "name": "..::: LAB :::..",
+    "dependencies": [
+      "app/main.css",
+      "app/new-them.css",
+      "app/index.vue",
+      "app/loader.vue",
+      "app/home.vue",
+      "components/vue-collapse.js"
+    ],
     "modules": {
-      "loader": {
-        "libs": "/js/",
-        "pages": "/pages/",
-        "components": "/components/",
-        "services": "/services/"
-      },
-      "router": [],
+      "navigator": [
+        {
+          "href": "",
+          "page": "home"
+        }
+      ],
       "view": {
         "focus": false,
-        "element": "#App",
-        "dependencies": [
-          "js/vue.min.js",
-          "components/vue-collapse.js"
-        ],
-        "components": [
-          "components/loader.vue",
-          "pages/index.vue"
-        ],
-        "styles": [
-          "assets/main.css",
-          "assets/new-them.css"
-        ]
+        "element": "#App"
       }
     }
   },
+
+  "data": {},
+
   "converter": {
-    "link": "converter",
-    "component": "converter/converter.vue",
-    "scripts": ["converter/converter.js"]
+    "main": "converter",
+    "links": ["converter"],
+    "dependencies": [
+      "converter/converter.vue",
+      "converter/converter.js"
+    ]
   },
   "testing": {
-    "link": "testing",
-    "component": "testing/testing.vue"
+    "main": "testing",
+    "links": "testing",
+    "dependencies": [
+      "testing/testing.vue"
+    ]
   },
   "js": {
-    "link": "js",
-    "component": "pages/js.vue"
+    "main": "js",
+    "links": "js",
+    "dependencies": [
+      "pages/js.vue"
+    ]
   },
   "image-convert": {
-    "link": "image-convert",
-    "component": "pages/image-convert.vue"
+    "main": "image-convert",
+    "links": "image-convert",
+    "dependencies": [
+      "pages/image-convert.vue"
+    ]
   }
 }
