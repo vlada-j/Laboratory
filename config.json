@@ -8,7 +8,7 @@
       "app/index.vue",
       "app/loader.vue",
       "app/home.vue",
-      "components/vue-collapse.js"
+      "app/vue-collapse.js"
     ],
     "modules": {
       "navigator": [
@@ -41,18 +41,19 @@
       "testing/testing.vue"
     ]
   },
-  "js": {
-    "main": "js",
-    "links": "js",
+  "js-console": {
+    "main": "js-console",
+    "links": "js-console",
     "dependencies": [
-      "pages/js.vue"
+      "js-console/js-console.vue"
     ]
   },
   "image-convert": {
     "main": "image-convert",
     "links": "image-convert",
     "dependencies": [
-      "pages/image-convert.vue"
+      "image-convert/image-convert.js",
+      "image-convert/image-convert.vue"
     ]
   }
 }

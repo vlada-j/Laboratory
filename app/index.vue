@@ -16,16 +16,8 @@ exports = {
 	links: [
 		{ label:'Converter',		link:'converter' },
 		{ label:'Testing',			link:'testing' },
-		{ label:'JS Console',		link:'js' },
+		{ label:'JS Console',		link:'js-console' },
 		{ label:'Image convert',	link:'image-convert' }
-	],
-	demos: [
-		{ label:'Home',			link:'' },
-		{ label:'Lists',		link:'lists' },
-		{ label:'Forms',		link:'forms' },
-		{ label:'Mixer',		link:'mixer' },
-		{ label:'Table Grid',	link:'table-grid' },
-		{ label:'ITEM',			link:'item/blabla' }
 	],
 	props: ['rootScope'],
 	currentView: 'home'
