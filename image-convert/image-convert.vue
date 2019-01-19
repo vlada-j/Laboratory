@@ -13,17 +13,23 @@
 			<!--------------->
 			<!-- DROP AREA -->
 			<!--------------->
-			<label class="drop-area">
-				Click or drop file here<br>(image file only)
-				<input type="file" accept="image/*" @change="run($event)">
-			</label>
+			<div class="image-input">
+				<label class="from-url">
+					<input type="url" v-model="imageUrl" placeholder="Path to image">
+					<button @click="loadImage()">Load</button>
+				</label>
+				<label class="drop-area">
+					Click or drop file here<br>(image file only)
+					<input type="file" accept="image/*" @change="fromFile($event)">
+				</label>
+			</div>
 
 
 			<!---------------->
 			<!-- IMAGE INFO -->
 			<!---------------->
 			<fieldset class="image-info"><legend>Image info</legend>
-				<table>
+				<table v-if="!error">
 					<tr>
 						<td>Name:</td><td>{{name}}</td>
 					</tr>
@@ -40,9 +46,12 @@
 						<td>Height:</td><td>{{height}} px</td>
 					</tr>
 				</table>
+				<p v-if="error">{{error}}</p>
+				<div class="text-center">
+					<input type="reset" value="RESET" class="go-center" @click="reset()">
+				</div>
 			</fieldset>
 		</div>
-		<p v-if="error">{{error}}</p>
 
 		<hr>
 
@@ -52,7 +61,7 @@
 			<!-------------->
 			<!-- URI CODE -->
 			<!-------------->
-			<fieldset class="image-code"><legend>Image URI</legend>
+			<fieldset class="image-code"><legend>Image URI - {{uri.length}} b</legend>
 				<textarea v-model="uri" readonly rows="20"></textarea>
 			</fieldset>
 
@@ -60,7 +69,7 @@
 			<!-------------->
 			<!-- CSS CODE -->
 			<!-------------->
-			<fieldset class="image-code"><legend>Image CSS</legend>
+			<fieldset class="image-code"><legend>Image CSS - {{css.length}} b</legend>
 				<textarea v-model="css" readonly rows="20"></textarea>
 			</fieldset>
 		</div>
@@ -73,11 +82,19 @@
 	display: flex;
 }
 
-
-.drop-area {
+.image-input {
 	-ms-flex: 1 1 auto;
 	flex: 1 1 auto;
 	margin:0 20px;
+}
+.from-url { display:block; height:3em; }
+.from-url input { width:calc(100% - 5em); }
+.from-url button {
+	float:right;
+	width:4em;
+}
+.drop-area {
+	display:block;
 	padding:100px 20px;
 	line-height:1.2;
 	text-align:center;
@@ -89,7 +106,7 @@
 	left:0;
 	opacity:0;
 	width:100%;
-	height:100%;
+	height:calc(100% - 3em);
 	position:absolute;
 }
 
@@ -141,6 +158,7 @@ exports = {
 	width: 0,
 	height: 0,
 	img: Image,
+	imageUrl: '',
 	error: '',
 	reset: function() {
 		this.name = '';
@@ -152,14 +170,50 @@ exports = {
 		this.height = 0;
 		this.img = null;
 		this.error = '';
+		this.imageUrl = '';
 	},
-	run: function(e) {
-		if( !e.target.files || e.target.files.length === 0) { return; }
 
+
+	loadImage: function() {
+		let self = this;
+		window.ImageConvert.loadImage(this.imageUrl)
+			.then( xhr => {
+				self.size = xhr.response.size;
+				self.type = xhr.response.type;
+				self.name = xhr.responseURL.substring(xhr.responseURL.lastIndexOf('/')+1);
+			})
+			.catch(function(e) { self.error = e; });
+		window.ImageConvert.uri2img(this.imageUrl)
+			.then( img => {
+				self.makeCss(img);
+				self.img = img;
+				self.width = img.naturalWidth;
+				self.height = img.naturalHeight;
+				return img;
+			})
+			.then(img => {
+				self.uri = window.ImageConvert.img2uri(img);
+			})
+			.catch(function(e) { self.error = e;console.log('error', e); });
+	},
+
+
+	fromFile: function(e) {
+		if( !e.target.files || e.target.files.length === 0) { return; }
+		this.run(e.target.files[0]);
+	},
+
+
+	makeCss: function(img) {
+		let pixels = window.ImageConvert.getPixels(img);
+		this.css = window.ImageConvert.makeCssImage(pixels, img.naturalWidth, img.naturalHeight);
+	},
+
+	run: function(file) {
 		let self = this;
 		this.reset();
 
-		extractDataFromImage(e.target.files[0])
+		extractDataFromImage(file)
 			.catch( setProps )
 			.then( setProps );
 
@@ -205,7 +259,8 @@ function extractDataFromImage(imgFile) {
 		.then( uri => imgData.uri = uri )
 		.then( window.ImageConvert.uri2img )
 		.then( img => {
-			imgData.css = getCSS(img);
+			let pixels = window.ImageConvert.getPixels(img);
+			imgData.css = window.ImageConvert.makeCssImage(pixels);
 			imgData.img = img;
 			imgData.width = img.naturalWidth;
 			imgData.height = img.naturalHeight;
@@ -218,30 +273,5 @@ function extractDataFromImage(imgFile) {
 		console.log('ERROR:', error);
 		return imgData;
 	}
-}
-
-
-
-function getCSS(img) {
-	let pixels = window.ImageConvert.getPixels(img);
-
-	let shadow = pixels.map(p => {
-		return p.x + 'px '
-			+ p.y + 'px #'
-			+ window.ImageConvert.toHex(p.r)
-			+ window.ImageConvert.toHex(p.g)
-			+ window.ImageConvert.toHex(p.b);
-	});
-
-	let rightMargin = img.width - 1;
-	let bottomMargin = img.height - 1;
-
-	return '.pixels{\n'
-		+'display:inline-block;\n'
-		+'width:1px;\n'
-		+'height:1px;\n'
-		+'margin:0 ' + rightMargin + 'px ' + bottomMargin + 'px 0;\n'
-		+'box-shadow:' + shadow.join(',') + ';\n'
-		+'}';
 }
 </script>

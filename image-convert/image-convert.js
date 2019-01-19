@@ -1,5 +1,16 @@
 window.ImageConvert = {
 
+	loadImage: function(url) {
+		return new Promise((resolve, reject) => {
+			let xhr = new XMLHttpRequest();
+			xhr.open('GET', url, true);
+			xhr.responseType = 'blob';
+			xhr.onload = ()=>resolve(xhr);
+			xhr.onerror = (e)=>reject(e);
+			xhr.send();
+		});
+	},
+
 	getUri: function(file) {
 		return new Promise((resolve, reject) => {
 			let reader = new FileReader();
@@ -23,13 +34,22 @@ window.ImageConvert = {
 		return h.length === 0 ? '00' : h.length === 1 ? '0' + h : h;
 	},
 
+	img2uri: function(img) {
+		let canvas = document.createElement('canvas');
+		canvas.width = img.naturalWidth;
+		canvas.height= img.naturalHeight;
+		canvas.getContext('2d').drawImage(img, 0, 0);
+		return canvas.toDataURL();
+	},
 
-	uri2img: function(uri) {
+
+	uri2img: function(url) {
 		return new Promise((resolve, reject) => {
 			let image = new Image();
+			image.crossOrigin = 'anonymous';
 			image.onload = ()=>resolve(image);
-			image.onerror = ()=>reject('Selected file is not image');
-			image.src = uri;
+			image.onerror = ()=>reject('Image can\'t by loaded');
+			image.src = url;
 		});
 	},
 
@@ -52,12 +72,26 @@ window.ImageConvert = {
 			}
 		}
 		return pixels;
+	},
+
+	makeCssImage: function(pixels, width, height) {
+		let shadow = pixels.map(function(p) {
+			return p.x + 'px '
+				+ p.y + 'px #'
+				+ window.ImageConvert.toHex(p.r)
+				+ window.ImageConvert.toHex(p.g)
+				+ window.ImageConvert.toHex(p.b);
+		});
+
+		let rightMargin = width - 1;
+		let bottomMargin = height - 1;
+
+		return '.pixels{\n'
+			+'display:inline-block;\n'
+			+'width:1px;\n'
+			+'height:1px;\n'
+			+'margin:0 ' + rightMargin + 'px ' + bottomMargin + 'px 0;\n'
+			+'box-shadow:' + shadow.join(',') + ';\n'
+			+'}';
 	}
 };
-
-
-
-(function() {
-'use strict';
-
-})();
