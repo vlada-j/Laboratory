@@ -180,7 +180,7 @@ exports = {
 			.then( xhr => {
 				self.size = xhr.response.size;
 				self.type = xhr.response.type;
-				self.name = xhr.responseURL.substring(xhr.responseURL.lastIndexOf('/')+1);
+				self.name = getFileName(xhr.responseURL);
 			})
 			.catch(function(e) { self.error = e; });
 		window.ImageConvert.uri2img(this.imageUrl)
@@ -195,6 +195,12 @@ exports = {
 				self.uri = window.ImageConvert.img2uri(img);
 			})
 			.catch(function(e) { self.error = e;console.log('error', e); });
+
+		function getFileName(url) {
+			let l = url.lastIndexOf('/') + 1;
+			let p = url.indexOf('?');
+			return p >= 0 ? url.substring(l, p) : url.substring(l);
+		}
 	},
 
 
