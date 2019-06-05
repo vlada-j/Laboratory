@@ -55,5 +55,15 @@
       "image-convert/image-convert.js",
       "image-convert/image-convert.vue"
     ]
+  },
+  "andrej": {
+    "main": "andrej",
+    "links": "andrej",
+    "dependencies": [
+      "andrej/random.js",
+      "andrej/andrej.js",
+      "andrej/task-wrapper.vue",
+      "andrej/andrej.vue"
+    ]
   }
 }
